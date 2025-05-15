@@ -2,7 +2,7 @@ import {
     RainbowKitProvider,
     darkTheme,
   } from "@rainbow-me/rainbowkit";
-  import { WagmiProvider, createConfig, http } from "wagmi";
+import { WagmiProvider, createConfig, http } from "wagmi";
   import { base, baseSepolia } from "wagmi/chains";
   import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
   import { createAvatar } from "@dicebear/core";

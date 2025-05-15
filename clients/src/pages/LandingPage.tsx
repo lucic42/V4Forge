@@ -17,15 +17,15 @@ const LandingPage = () => {
   const [activeTab, setActiveTab] = useState("all")
   const [launches, setLaunches] = useState(mockLaunches)
   const [selectedToken, setSelectedToken] = useState<string | null>(null)
-  const [scrollY, setScrollY] = useState(0)
+  // const [scrollY, setScrollY] = useState(0)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     setScrollY(window.scrollY)
+  //   }
+  //   window.addEventListener("scroll", handleScroll)
+  //   return () => window.removeEventListener("scroll", handleScroll)
+  // }, [])
 
   const filterLaunches = (tab: string) => {
     if (tab === "all") return mockLaunches

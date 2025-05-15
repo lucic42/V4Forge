@@ -25,7 +25,7 @@ function parseAddressList(addressList: string) {
 }
 
 export default function AirdropPage() {
-  const { isConnected, address } = useAccount()
+  const { isConnected } = useAccount()
   const [tokenAddress, setTokenAddress] = useState("")
   const [airdropAmount, setAirdropAmount] = useState("")
   const [addressList, setAddressList] = useState("")
@@ -34,7 +34,6 @@ export default function AirdropPage() {
   const [hoveredField, setHoveredField] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoadingToken, setIsLoadingToken] = useState(false)
   const [tokenInfo, setTokenInfo] = useState<any>(null)
   const [tokenError, setTokenError] = useState<string | null>(null)

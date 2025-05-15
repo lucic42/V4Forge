@@ -26,7 +26,7 @@ interface PriceChartProps {
   showAfterLaunch?: boolean
 }
 
-const PriceChart = ({ type, startPrice, endPrice, showAfterLaunch = false }: PriceChartProps) => {
+const PriceChart = ({ type, startPrice, showAfterLaunch = false }: PriceChartProps) => {
   const chartRef = useRef<any>(null)
   const { theme } = useTheme()
 
@@ -69,7 +69,7 @@ const PriceChart = ({ type, startPrice, endPrice, showAfterLaunch = false }: Pri
       const lastPrice = pricePoints[pricePoints.length - 1]
       const volatility = 0.1 // 10% price movement
 
-      const postLaunchPrices = postLaunchLabels.map((_, i) => {
+      const postLaunchPrices = postLaunchLabels.map((_) => {
         const randomFactor = 1 + (Math.random() * volatility * 2 - volatility)
         return lastPrice * randomFactor
       })

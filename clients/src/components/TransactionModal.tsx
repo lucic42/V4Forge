@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, CheckCircle, XCircle, ExternalLink, Copy, CheckCheck, Loader2, ArrowRight } from 'lucide-react'
+import { X, CheckCircle, XCircle, ExternalLink, Copy, CheckCheck, ArrowRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useAccount } from "wagmi"
 
