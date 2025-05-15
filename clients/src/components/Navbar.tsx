@@ -2,13 +2,14 @@
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./mode-toggle"
-import { Code2, LayoutDashboard, Zap } from "lucide-react"
-import { motion } from "framer-motion"
+import { Code2, LayoutDashboard, Zap, Menu, X, Home } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react"
 import ConnectWallet from "./ConnectButton"
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
@@ -18,6 +19,29 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [location])
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "unset"
+    }
+    return () => {
+      document.body.style.overflow = "unset"
+    }
+  }, [mobileMenuOpen])
+
+  const navItems = [
+    { path: "/", label: "Home", icon: Home },
+    { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/airdrop", label: "Airdrop", icon: Zap },
+  ]
 
   return (
     <motion.nav
@@ -54,29 +78,20 @@ const Navbar = () => {
           </motion.span>
         </Link>
 
-        <div className="flex items-center space-x-2">
-
-          <Link to="/dashboard">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={location.pathname === "/dashboard" ? "text-teal-500" : "text-muted-foreground"}
-            >
-              <LayoutDashboard className="h-4 w-4 mr-1" />
-              Dashboard
-            </Button>
-          </Link>
-
-          <Link to="/airdrop">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={location.pathname === "/airdrop" ? "text-teal-500" : "text-muted-foreground"}
-            >
-              <Zap className="h-4 w-4 mr-1" />
-              Airdrop
-            </Button>
-          </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-2">
+          {navItems.map((item) => (
+            <Link key={item.path} to={item.path}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={location.pathname === item.path ? "text-teal-500" : "text-muted-foreground"}
+              >
+                <item.icon className="h-4 w-4 mr-1" />
+                {item.label}
+              </Button>
+            </Link>
+          ))}
 
           <Link to="/create">
             <Button
@@ -92,7 +107,64 @@ const Navbar = () => {
 
           <ConnectWallet />
         </div>
+
+        {/* Mobile Navigation Toggle */}
+        <div className="flex items-center space-x-2 md:hidden">
+          <ModeToggle />
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="text-teal-500"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-teal-500/10"
+          >
+            <div className="container mx-auto py-4 px-4 space-y-4">
+              {navItems.map((item) => (
+                <Link key={item.path} to={item.path}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`w-full justify-start ${location.pathname === item.path ? "text-teal-500 bg-teal-500/10" : "text-muted-foreground"
+                      }`}
+                  >
+                    <item.icon className="h-4 w-4 mr-2" />
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
+
+              <Link to="/create" className="block">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start border-teal-500/50 hover:border-teal-500 hover:bg-teal-500/10"
+                >
+                  Create Launch
+                </Button>
+              </Link>
+
+              <div className="pt-2 border-t border-teal-500/10">
+                <ConnectWallet />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   )
 }

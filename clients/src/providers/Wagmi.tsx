@@ -5,7 +5,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { WagmiProvider, http } from "wagmi";
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { base, baseSepolia } from "wagmi/chains";
+import { celoAlfajores, baseSepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { createAvatar } from "@dicebear/core";
 import { pixelArt } from "@dicebear/collection";
@@ -15,14 +15,12 @@ const WALLET_CONNECT_PROJECT_ID = "2982c9aba61fcaccb0d48f88b2833944";
 
 const REOWN_CLOUD_APP_ID = import.meta.env.VITE_REOWN_CLOUD_APP_ID || WALLET_CONNECT_PROJECT_ID;
 
-console.log(REOWN_CLOUD_APP_ID);
-
 export const config = getDefaultConfig({
   appName: "V4Forge",
   projectId: REOWN_CLOUD_APP_ID,
-  chains: [base, baseSepolia],
+  chains: [celoAlfajores, baseSepolia],
   transports: {
-    [base.id]: http(),
+    [celoAlfajores.id]: http(),
     [baseSepolia.id]: http(),
   },
   ssr: true,
