@@ -533,9 +533,9 @@ export const AIRDROP_ABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export const BASE_AIRDROP_CONTRACT_ADDRESS =
-  "0x26aEBF4d688508fC9cAd8049f3985c5eB4B376ba";
+  "0x26aEBF4d688508fC9cAd8049f3985c5eB4B376ba" as const;
 export const CELO_AIRDROP_CONTRACT_ADDRESS =
-  "0x66409ee2475Aad38a2Eac13fA135ef18C6ac6f8a";
+  "0x66409ee2475Aad38a2Eac13fA135ef18C6ac6f8a" as const;

@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -9,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useAccount, useChainId } from "wagmi"
 import { toast } from "react-hot-toast"
-// import { parseUnits } from "viem"
 import { readContract } from "@wagmi/core"
 import { config } from "@/providers/Wagmi"
 import { erc20Abi } from "@/utils/ERC20"
@@ -55,10 +56,10 @@ export default function AirdropPage() {
     isDistributing,
     isProcessing,
     currentTxHash,
-    txReceipt,
+    // txReceipt,
     serviceFee,
     distributionStatus,
-    clearDistributionStatus
+    clearDistributionStatus,
   } = useTokenAirdrop()
 
   // Open modal when distribution starts or status changes
@@ -90,21 +91,21 @@ export default function AirdropPage() {
           const name = await readContract(config, {
             address: debouncedTokenAddress as `0x${string}`,
             abi: erc20Abi,
-            functionName: "name"
+            functionName: "name",
           })
 
           // Get token symbol
           const symbol = await readContract(config, {
             address: debouncedTokenAddress as `0x${string}`,
             abi: erc20Abi,
-            functionName: "symbol"
+            functionName: "symbol",
           })
 
           // Get token decimals
           const decimals = await readContract(config, {
             address: debouncedTokenAddress as `0x${string}`,
             abi: erc20Abi,
-            functionName: "decimals"
+            functionName: "decimals",
           })
 
           // Get token balance
@@ -112,19 +113,19 @@ export default function AirdropPage() {
             address: debouncedTokenAddress as `0x${string}`,
             abi: erc20Abi,
             functionName: "balanceOf",
-            args: [address]
+            args: [address],
           })
 
           // Format balance with decimals
-          const formattedBalance = parseFloat(
-            (Number(balance) / Math.pow(10, Number(decimals))).toString()
+          const formattedBalance = Number.parseFloat(
+            (Number(balance) / Math.pow(10, Number(decimals))).toString(),
           ).toLocaleString(undefined, { maximumFractionDigits: 2 })
 
           setTokenInfo({
             name,
             symbol,
             decimal: decimals,
-            balance: formattedBalance
+            balance: formattedBalance,
           })
         } catch (error) {
           console.error("Error fetching token info:", error)
@@ -174,23 +175,23 @@ export default function AirdropPage() {
   useEffect(() => {
     if (distributionStatus.status === "success") {
       toast.success(`Successfully airdropped tokens to ${addressCount} addresses`, {
-        id: "distributionToast"
-      });
+        id: "distributionToast",
+      })
 
       // Reset form on successful distribution after a delay
       const timer = setTimeout(() => {
-        setTokenAddress("");
-        setAirdropAmount("");
-        setAddressList("");
-      }, 3000); // Give user time to see the success state before reset
+        setTokenAddress("")
+        setAirdropAmount("")
+        setAddressList("")
+      }, 3000) // Give user time to see the success state before reset
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     } else if (distributionStatus.status === "error") {
       toast.error(`Failed to send airdrop: ${distributionStatus.error || "Unknown error"}`, {
-        id: "distributionToast"
-      });
+        id: "distributionToast",
+      })
     }
-  }, [distributionStatus, addressCount]);
+  }, [distributionStatus, addressCount])
 
   const handleCopyExample = () => {
     const exampleAddresses =
@@ -227,50 +228,50 @@ export default function AirdropPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!isConnected) {
-      toast.error("Please connect your wallet first");
-      return;
+      toast.error("Please connect your wallet first")
+      return
     }
 
     if (!tokenAddress || !airdropAmount || !addressList.trim() || !tokenInfo) {
-      toast.error("Please fill in all required fields");
-      return;
+      toast.error("Please fill in all required fields")
+      return
     }
 
-    const recipients = parseAddressList(addressList);
+    const recipients = parseAddressList(addressList)
 
     if (recipients.length === 0) {
-      toast.error("Please enter at least one valid recipient address");
-      return;
+      toast.error("Please enter at least one valid recipient address")
+      return
     }
 
     // Clear previous distribution status
-    clearDistributionStatus();
+    clearDistributionStatus()
 
     // Show loading toast
-    toast.loading("Processing airdrop transaction...", { id: "airdropToast" });
+    toast.loading("Processing airdrop transaction...", { id: "airdropToast" })
 
     try {
       // Open modal right before starting the transaction
-      setIsModalOpen(true);
+      setIsModalOpen(true)
 
       // Use the performTokenAirdrop function from the hook
       const result = await performTokenAirdrop(
         tokenAddress as `0x${string}`,
         tokenInfo.decimal,
         recipients as `0x${string}`[],
-        airdropAmount
-      );
+        airdropAmount,
+      )
 
       if (!result.success) {
-        toast.dismiss("airdropToast");
-        toast.error(`Failed to send airdrop: ${result.error || "Unknown error"}`);
+        toast.dismiss("airdropToast")
+        toast.error(`Failed to send airdrop: ${result.error || "Unknown error"}`)
       }
-    } catch (error) {
-      toast.dismiss("airdropToast");
-      toast.error(`Failed to send airdrop: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } catch (error: any) {
+      toast.dismiss("airdropToast")
+      toast.error(`Failed to send airdrop: ${error instanceof Error ? error.message : "Unknown error"}`)
     }
   }
 
@@ -303,14 +304,13 @@ export default function AirdropPage() {
   // Determine the modal status based on current state
   const getModalStatus = () => {
     if (distributionStatus.status) {
-      return distributionStatus.status;
+      return distributionStatus.status
     }
     if (isApproving || isDistributing) {
-      return "pending";
+      return "pending"
     }
-    return null;
-  };
-
+    return null
+  }
 
   return (
     <div className="space-y-6">
@@ -346,7 +346,10 @@ export default function AirdropPage() {
         </CardHeader>
         <CardContent>
           <div className="font-mono text-xs bg-black text-teal-500 p-3 rounded-md h-24 overflow-auto">
-            <div className="mb-1">&gt; {chainId === 84532 ? "Base" : chainId === 44787 ? "Celo" : "Ethereum"} Network: {isConnected ? "Connected" : "Not Connected"}</div>
+            <div className="mb-1">
+              &gt; {chainId === 84532 ? "Base" : chainId === 44787 ? "Celo" : "Ethereum"} Network:{" "}
+              {isConnected ? "Connected" : "Not Connected"}
+            </div>
             <div className="mb-1">&gt; Gas Price: 25 Gwei</div>
             <div className="mb-1">&gt; Airdrop Module: Ready</div>
             <div className="mb-1">
@@ -639,7 +642,9 @@ export default function AirdropPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Estimated gas</span>
-                    <span>~{formatUnits(serviceFee, 18) || "0.00002"} {symbol}</span>
+                    <span>
+                      ~{formatUnits(serviceFee, 18) || "0.00002"} {symbol}
+                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -675,9 +680,7 @@ export default function AirdropPage() {
                     </div>
                   )}
                   {distributionStatus.error && (
-                    <div className="text-sm text-red-400 mt-2">
-                      Error: {distributionStatus.error}
-                    </div>
+                    <div className="text-sm text-red-400 mt-2">Error: {distributionStatus.error}</div>
                   )}
                 </motion.div>
               )}
@@ -752,7 +755,17 @@ airdropTokens();`}</pre>
           </div>
         </CardContent>
       </Card>
-      <AirdropModal isOpen={isModalOpen} onClose={handleCloseModal} status={getModalStatus()} txHash={distributionStatus.txHash} tokenInfo={tokenInfo} recipientCount={addressCount} airdropAmount={!isNaN(Number(airdropAmount)) ? Number(airdropAmount) * addressCount : 0} error={distributionStatus?.error} />
+
+      {/* Modal Component */}
+      <AirdropModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        status={getModalStatus()}
+        txHash={distributionStatus.txHash as `0x${string}`}
+        tokenInfo={tokenInfo}
+        recipientCount={addressCount}
+        airdropAmount={!isNaN(Number(airdropAmount)) ? (Number(airdropAmount) * addressCount).toString() : "0"}
+      />
     </div>
   )
 }

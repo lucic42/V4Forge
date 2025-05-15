@@ -22,18 +22,22 @@ export function useTokenAirdrop() {
   const chainId = useChainId();
   const [isApproving, setIsApproving] = useState(false);
   const [isDistributing, setIsDistributing] = useState(false);
-  const [currentTxHash, setCurrentTxHash] = useState(null);
-  const [approvalTxHash, setApprovalTxHash] = useState(null);
+  const [currentTxHash, setCurrentTxHash] = useState<`0x${string}` | null>(
+    null
+  );
+  // const [approvalTxHash, setApprovalTxHash] = useState<`0x${string}` | null>(
+  //   null
+  // );
   const [distributionStatus, setDistributionStatus] = useState({
-    status: null, // 'success', 'error', 'pending', null
-    txHash: null,
-    error: null,
-    timestamp: null,
+    status: null as "success" | "error" | "pending" | null,
+    txHash: null as `0x${string}` | null,
+    error: null as string | null,
+    timestamp: null as number | null,
   });
 
   // Get the correct airdrop contract address based on the current chain
   const getAirdropContractAddress = useCallback(() => {
-    // Pharos chain ID
+    // Base chain ID
     if (chainId === 84532) {
       return BASE_AIRDROP_CONTRACT_ADDRESS;
     }
@@ -53,20 +57,20 @@ export function useTokenAirdrop() {
   // Transaction receipt hooks
   const { data: txReceipt, isLoading: isWaitingForReceipt } =
     useWaitForTransactionReceipt({
-      hash: currentTxHash,
+      hash: currentTxHash as `0x${string}`,
     });
 
   // Service fee reader
   const { data: serviceFee } = useReadContract({
-    address: airdropContractAddress,
+    address: airdropContractAddress as `0x${string}`,
     abi: AIRDROP_ABI,
     functionName: "getServiceFee",
-    enabled: !!airdropContractAddress,
+    // enabled: !!airdropContractAddress as `0x${string}`,
   });
 
   // Function to check token allowance - using readContract instead of hook
   const checkTokenAllowance = useCallback(
-    async (tokenAddress, totalAmountInWei) => {
+    async (tokenAddress: `0x${string}`, totalAmountInWei: bigint) => {
       try {
         if (!airdropContractAddress || !address) {
           throw new Error("Missing contract address or user address");
@@ -93,7 +97,6 @@ export function useTokenAirdrop() {
   );
 
   // Effect to handle transaction receipt updates
-
   useEffect(() => {
     if (txReceipt && currentTxHash) {
       const status = txReceipt.status === "success" ? "success" : "error";
@@ -124,7 +127,7 @@ export function useTokenAirdrop() {
 
   // Function to approve token spending with direct transaction waiting
   const approveToken = useCallback(
-    async (tokenAddress, totalAmountInWei) => {
+    async (tokenAddress: `0x${string}`, totalAmountInWei: bigint) => {
       try {
         setIsApproving(true);
 
@@ -132,10 +135,10 @@ export function useTokenAirdrop() {
           address: tokenAddress,
           abi: erc20Abi,
           functionName: "approve",
-          args: [airdropContractAddress, totalAmountInWei],
+          args: [airdropContractAddress as `0x${string}`, totalAmountInWei],
         });
 
-        setApprovalTxHash(hash);
+        // setApprovalTxHash(hash);
         toast.loading("Approving token transfer...", { id: "approvalToast" });
 
         // Directly wait for the transaction completion
@@ -150,7 +153,7 @@ export function useTokenAirdrop() {
 
         toast.success("Token approval successful", { id: "approvalToast" });
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error approving token:", error);
         toast.error(
           `Error approving token: ${error.message || "Unknown error"}`,
@@ -159,7 +162,7 @@ export function useTokenAirdrop() {
         return false;
       } finally {
         setIsApproving(false);
-        setApprovalTxHash(null);
+        // setApprovalTxHash(null);
       }
     },
     [airdropContractAddress, approveTokenAsync]
@@ -167,7 +170,11 @@ export function useTokenAirdrop() {
 
   // Execute token distribution
   const distributeToken = useCallback(
-    async (tokenAddress, recipients, amountsInWei) => {
+    async (
+      tokenAddress: `0x${string}`,
+      recipients: `0x${string}`[],
+      amountsInWei: bigint[]
+    ) => {
       try {
         if (!airdropContractAddress) {
           throw new Error("Unsupported chain");
@@ -205,7 +212,7 @@ export function useTokenAirdrop() {
           id: "distributionToast",
         });
         return hash;
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error distributing tokens:", error);
         setDistributionStatus({
           status: "error",
@@ -230,7 +237,12 @@ export function useTokenAirdrop() {
 
   // Function to handle the entire airdrop process
   const performTokenAirdrop = useCallback(
-    async (tokenAddress, tokenDecimals, recipients, amountPerRecipient) => {
+    async (
+      tokenAddress: `0x${string}`,
+      tokenDecimals: number,
+      recipients: `0x${string}`[],
+      amountPerRecipient: string
+    ) => {
       try {
         // Validate inputs
         if (!recipients || recipients.length === 0) {
@@ -298,7 +310,7 @@ export function useTokenAirdrop() {
           success: true,
           hash,
         };
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error in token airdrop process:", error);
         setDistributionStatus({
           status: "error",
@@ -331,7 +343,7 @@ export function useTokenAirdrop() {
     performTokenAirdrop,
     isApproving,
     isDistributing,
-    serviceFee,
+    serviceFee: serviceFee || BigInt(0),
     isProcessing: isApproving || isDistributing || isWaitingForReceipt,
     currentTxHash,
     txReceipt,
