@@ -183,7 +183,7 @@ export default function AirdropPage() {
         setTokenAddress("")
         setAirdropAmount("")
         setAddressList("")
-      }, 3000) // Give user time to see the success state before reset
+      }, 5000) // Give user time to see the success state before reset
 
       return () => clearTimeout(timer)
     } else if (distributionStatus.status === "error") {
@@ -632,12 +632,12 @@ export default function AirdropPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Amount per recipient</span>
-                    <span>{airdropAmount} tokens</span>
+                    <span>{Number(airdropAmount).toLocaleString()} tokens</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Total tokens</span>
                     <span className="font-medium text-teal-500">
-                      {!isNaN(Number(airdropAmount)) ? Number(airdropAmount) * addressCount : 0} tokens
+                      {!isNaN(Number(airdropAmount)) ? Number(Number(airdropAmount) * addressCount).toLocaleString() : 0} tokens
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">

@@ -1,10 +1,9 @@
 import {
   RainbowKitProvider,
   darkTheme,
-  type AvatarComponent,
 } from "@rainbow-me/rainbowkit";
-import { WagmiProvider, http } from "wagmi";
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { WagmiProvider, http, createConfig } from "wagmi";
+// import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { celoAlfajores, baseSepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { createAvatar } from "@dicebear/core";
@@ -15,7 +14,7 @@ const WALLET_CONNECT_PROJECT_ID = "2982c9aba61fcaccb0d48f88b2833944";
 
 const REOWN_CLOUD_APP_ID = import.meta.env.VITE_REOWN_CLOUD_APP_ID || WALLET_CONNECT_PROJECT_ID;
 
-export const config = getDefaultConfig({
+export const config = createConfig({
   appName: "V4Forge",
   projectId: REOWN_CLOUD_APP_ID,
   chains: [celoAlfajores, baseSepolia],
@@ -26,12 +25,8 @@ export const config = getDefaultConfig({
   ssr: true,
 });
 
-interface DicebearAvatarProps {
-  address: string;
-  size: number;
-}
 
-const DicebearPersonaAvatar = ({ address, size }: DicebearAvatarProps) => {
+const DicebearPersonaAvatar = ({ address, size }) => {
   // Generate avatar using the dicebear pixelArt style
   const avatarUri = createAvatar(pixelArt, {
     seed: address.toLowerCase(),
@@ -51,7 +46,7 @@ const DicebearPersonaAvatar = ({ address, size }: DicebearAvatarProps) => {
   );
 };
 
-const customAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+const customAvatar= ({ address, ensImage, size }) => {
   // If there's an ENS image, use it instead of DiceBear
   if (ensImage) {
     return (
@@ -69,11 +64,8 @@ const customAvatar: AvatarComponent = ({ address, ensImage, size }) => {
   }
 };
 
-interface WagmiConfigProviderProps {
-  children: ReactNode;
-}
 
-export const WagmiConfigProvider = ({ children }: WagmiConfigProviderProps) => {
+export const WagmiConfigProvider = ({ children }) => {
   const queryClient = new QueryClient();
 
   if (!REOWN_CLOUD_APP_ID) {

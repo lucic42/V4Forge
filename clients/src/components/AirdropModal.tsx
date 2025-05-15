@@ -115,11 +115,11 @@ export default function AirdropModal({
                   </div>
                   <div>
                     <p className="text-teal-500">Amount per recipient</p>
-                    <p className="font-medium">{airdropAmount}</p>
+                    <p className="font-medium">{Number(airdropAmount).toLocaleString()}</p>
                   </div>
                   <div>
                     <p className="text-teal-500">Total amount</p>
-                    <p className="font-medium">{Number(airdropAmount) * recipientCount}</p>
+                    <p className="font-medium">{Number(Number(airdropAmount) * recipientCount).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
