@@ -2,7 +2,8 @@ import {
     RainbowKitProvider,
     darkTheme,
   } from "@rainbow-me/rainbowkit";
-import { WagmiProvider, createConfig, http } from "wagmi";
+import { WagmiProvider, http } from "wagmi";
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
   import { base, baseSepolia } from "wagmi/chains";
   import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
   import { createAvatar } from "@dicebear/core";
@@ -12,7 +13,7 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 
   console.log(REOWN_CLOUD_APP_ID);
   
-  export const config = createConfig({
+  export const config = getDefaultConfig({
     appName: "V4Forge",
     projectId: REOWN_CLOUD_APP_ID,
     chains: [base, baseSepolia],
