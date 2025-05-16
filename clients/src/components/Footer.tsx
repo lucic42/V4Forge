@@ -22,7 +22,7 @@ export const Footer = () => {
           </p>
 
           <Link
-            to="https://github.com/v4forge"
+            to="https://github.com/hola-official/V4Forge"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-teal-500 transition-colors"

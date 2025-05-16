@@ -18,4 +18,4 @@ contract DeployAirdropScript is Script {
 
         vm.stopBroadcast();
     }
-} 
+}
