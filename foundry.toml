@@ -1,0 +1,61 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+cache_path = "cache"
+ffi = true
+fs_permissions = [
+    { access = "read-write", path = ".forge-snapshots/" }, 
+    { access = "read", path = "./" }, 
+    { access = "read", path = "./out" }
+]
+# solc_version = "0.8.24"
+solc = "0.8.28"
+evm_version = "cancun"
+bytecode_hash = "none"
+cbor_metadata = false
+optimizer = true
+optimizer_runs = 50
+via_ir = true
+
+# Enhanced Error Reporting
+verbosity = 3  # More verbose output
+show_progress = true
+color = "auto"
+
+# Linting and Warnings
+extra_output = ["storageLayout", "devdoc", "userdoc"]
+ignored_error_codes = []  # Don't ignore any errors
+deny_warnings = false  # Set to true in CI
+
+# Gas Configuration
+gas_reports = ["*"]
+gas_reports_ignore = []
+
+# Testing Configuration  
+fuzz = { runs = 256 }
+invariant = { runs = 256, depth = 15 }
+
+# Development Profile (more strict)
+[profile.dev]
+src = "src"
+out = "out"
+libs = ["lib"]
+verbosity = 4
+deny_warnings = true
+show_progress = true
+extra_output_files = ["abi", "evm.assembly", "storageLayout"]
+
+# CI Profile (most strict)
+[profile.ci]
+src = "src" 
+out = "out"
+libs = ["lib"]
+verbosity = 4
+deny_warnings = true
+show_progress = true
+fuzz = { runs = 10000 }
+invariant = { runs = 1000, depth = 20 }
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
