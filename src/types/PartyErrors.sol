@@ -67,7 +67,7 @@ library PartyErrors {
         INVALID_LAUNCH_TIME, // 100
         LAUNCH_TIME_NOT_REACHED, // 101
         // Refund errors (110-119)
-        ALREADY_REFUNDED, // 110
+        ALREADY_REFUNDED // 110
     }
 
     // Custom errors with error codes for easy debugging
