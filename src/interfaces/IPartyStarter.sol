@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {PartyTypes} from "../types/PartyTypes.sol";
-import {PoolId} from "v4-core/src/types/PoolId.sol";
+// Removed V4 imports - now using V3
 
 /**
  * @title IPartyStarter
@@ -16,7 +16,7 @@ interface IPartyStarter {
         address indexed creator,
         string name,
         string symbol,
-        PoolId poolId,
+        address poolAddress,
         uint256 totalLiquidity,
         uint256 timestamp
     );
@@ -31,7 +31,7 @@ interface IPartyStarter {
     event PartyLaunched(
         uint256 indexed partyId,
         address indexed tokenAddress,
-        PoolId indexed poolId,
+        address indexed poolAddress,
         uint256 totalLiquidity
     );
 
@@ -44,21 +44,70 @@ interface IPartyStarter {
         uint256 platformAmount
     );
 
+    // Enhanced events for comprehensive data capture
+    event TokenDeployed(
+        uint256 indexed partyId,
+        address indexed tokenAddress,
+        address indexed creator,
+        uint256 totalSupply,
+        uint256 liquidityTokens,
+        uint256 creatorTokens,
+        uint256 vaultTokens,
+        uint256 timestamp
+    );
+
+    event PartyProgressUpdate(
+        uint256 indexed partyId,
+        uint256 currentAmount,
+        uint256 targetAmount,
+        uint256 contributorCount,
+        uint8 progressPercentage,
+        uint256 timestamp
+    );
+
+    event PartyLaunchComplete(
+        uint256 indexed partyId,
+        address indexed tokenAddress,
+        address indexed creator,
+        address poolAddress,
+        uint256 totalLiquidity,
+        uint256 initialPrice,
+        uint256 marketCap,
+        uint256 timestamp
+    );
+
+    event PartyTimeoutLaunched(
+        uint256 indexed partyId,
+        address indexed launcher,
+        uint256 ethAmount,
+        uint256 timestamp
+    );
+
     // Main functions
     function createInstantParty(
         PartyTypes.TokenMetadata calldata metadata
     ) external payable returns (uint256 partyId);
 
     function createPublicParty(
-        PartyTypes.TokenMetadata calldata metadata,
-        uint256 targetLiquidity
+        uint256 targetLiquidity,
+        uint256 targetSupply,
+        uint256 launchTime
     ) external returns (uint256 partyId);
 
     function createPrivateParty(
-        PartyTypes.TokenMetadata calldata metadata,
         uint256 targetLiquidity,
+        uint256 targetSupply,
+        uint256 launchTime,
         address signerAddress
     ) external returns (uint256 partyId);
+
+    function setPartyMetadata(
+        uint256 partyId,
+        string[] calldata fieldNames,
+        string[] calldata fieldValues
+    ) external;
+
+    function isMetadataComplete(uint256 partyId) external view returns (bool);
 
     function launchFromVenue(uint256 partyId) external payable;
 
