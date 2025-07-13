@@ -14,9 +14,20 @@ interface INonfungiblePositionManager {
         uint24 fee;
     }
 
-    /// @notice Returns the pool for a given position
+    /// @notice Returns the position information for a given token ID
     /// @param tokenId The ID of the token that represents the position
-    /// @return pool The address of the pool
+    /// @return nonce The nonce for permits
+    /// @return operator The address that is approved for the token ID
+    /// @return token0 The first token address
+    /// @return token1 The second token address
+    /// @return fee The fee of the pool
+    /// @return tickLower The lower tick of the position
+    /// @return tickUpper The upper tick of the position
+    /// @return liquidity The amount of liquidity in the position
+    /// @return feeGrowthInside0LastX128 The fee growth inside the tick range, snapshot representing the reading of last modification
+    /// @return feeGrowthInside1LastX128 The fee growth inside the tick range, snapshot representing the reading of last modification
+    /// @return tokensOwed0 The uncollected amount of token0 owed to the position as of the last computation
+    /// @return tokensOwed1 The uncollected amount of token1 owed to the position as of the last computation
     function positions(
         uint256 tokenId
     )

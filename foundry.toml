@@ -6,8 +6,8 @@ test = "test"
 cache_path = "cache"
 ffi = true
 fs_permissions = [
-    { access = "read-write", path = ".forge-snapshots/" }, 
-    { access = "read", path = "./" }, 
+    { access = "read-write", path = ".forge-snapshots/" },
+    { access = "read", path = "./" },
     { access = "read", path = "./out" }
 ]
 # solc_version = "0.8.24"
@@ -18,6 +18,11 @@ cbor_metadata = false
 optimizer = true
 optimizer_runs = 50
 via_ir = true
+
+remappings = [
+    "@uniswap/v3-core/=lib/v3-core/",
+    "@uniswap/v3-periphery/=lib/v3-periphery/"
+]
 
 # Enhanced Error Reporting
 verbosity = 3  # More verbose output
@@ -33,7 +38,7 @@ deny_warnings = false  # Set to true in CI
 gas_reports = ["*"]
 gas_reports_ignore = []
 
-# Testing Configuration  
+# Testing Configuration
 fuzz = { runs = 256 }
 invariant = { runs = 256, depth = 15 }
 
@@ -49,7 +54,7 @@ extra_output_files = ["abi", "evm.assembly", "storageLayout"]
 
 # CI Profile (most strict)
 [profile.ci]
-src = "src" 
+src = "src"
 out = "out"
 libs = ["lib"]
 verbosity = 4

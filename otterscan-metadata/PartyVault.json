@@ -1,0 +1,234 @@
+{
+    "contractName": "PartyVault",
+    "bytecode": "0x60808060405234604d575f80546001600160a01b031916339081178255907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08180a361067290816100528239f35b5f80fdfe6080806040526004361015610012575f80fd5b5f3560e01c9081632a5c792a1461051357508063357291301461035d5780633aecd0e3146102e35780634f64b2be1461031b578063523fba7f146102e357806378a89567146102c65780638da5cb5b1461029f5780639bc5c509146100f75763f2fde38b1461007f575f80fd5b346100f35760203660031901126100f3576100986105bb565b5f54906100af336001600160a01b03841614610637565b6001600160a01b03166001600160a01b03199190911681175f90815533907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a3005b5f80fd5b346100f35760603660031901126100f3576101106105bb565b6044356001600160a01b03811691602435918390036100f35761013d60018060a01b035f54163314610637565b60018060a01b031690815f5260016020528060405f20541061026357821561022257815f52600160205260405f2080549082820391821161020e57556040519063a9059cbb60e01b82528360048301528060248301526020826044815f875af1908115610203577fa0524ee0fd8662d6c046d199da2a6d3dc49445182cec055873a5bb9c2843c8e0926020926101d8575b50604051908152a3005b6101f790833d85116101fc575b6101ef81836105fd565b81019061061f565b6101ce565b503d6101e5565b6040513d5f823e3d90fd5b634e487b7160e01b5f52601160045260245ffd5b60405162461bcd60e51b8152602060048201526019602482015278496e76616c696420726563697069656e74206164647265737360381b6044820152606490fd5b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b346100f3575f3660031901126100f3575f546040516001600160a01b039091168152602090f35b346100f3575f3660031901126100f3576020600254604051908152f35b346100f35760203660031901126100f3576001600160a01b036103046105bb565b165f526001602052602060405f2054604051908152f35b346100f35760203660031901126100f3576004356002548110156100f3576103446020916105d1565b905460405160039290921b1c6001600160a01b03168152f35b346100f35760403660031901126100f3576103766105bb565b602435906001600160a01b031680156104d6578115610491576040516323b872dd60e01b8152336004820152306024820152604481018390526020816064815f865af1801561020357610474575b50805f52600160205260405f205415610420575b805f52600160205260405f2080549083820180921161020e57556040519182527fde49bbe8e448cdfa40e6fa0d22592be9a03b28ba746527635dbe5235416659cf60203393a3005b600254600160401b8110156104605780600161043f92016002556105d1565b81546001600160a01b0360039290921b91821b19169083901b1790556103d8565b634e487b7160e01b5f52604160045260245ffd5b61048c9060203d6020116101fc576101ef81836105fd565b6103c4565b60405162461bcd60e51b815260206004820152601d60248201527f416d6f756e74206d7573742062652067726561746572207468616e20300000006044820152606490fd5b60405162461bcd60e51b8152602060048201526015602482015274496e76616c696420746f6b656e206164647265737360581b6044820152606490fd5b346100f3575f3660031901126100f3576002549081815260208101809260025f5260205f20905f5b81811061059c57505050816105519103826105fd565b604051918291602083019060208452518091526040830191905f5b81811061057a575050500390f35b82516001600160a01b031684528594506020938401939092019160010161056c565b82546001600160a01b031684526020909301926001928301920161053b565b600435906001600160a01b03821682036100f357565b6002548110156105e95760025f5260205f2001905f90565b634e487b7160e01b5f52603260045260245ffd5b90601f8019910116810190811067ffffffffffffffff82111761046057604052565b908160209103126100f3575180151581036100f35790565b1561063e57565b60405162461bcd60e51b815260206004820152600c60248201526b15539055551213d49256915160a21b6044820152606490fd",
+    "abi": [
+  {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getAllTokens",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTokenBalance",
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTokenCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "receiveTokens",
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "tokenBalances",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokens",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "transferOwnership",
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "withdrawTokens",
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TokenReceived",
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "from",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TokenWithdrawn",
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  }
+],
+    "sourceCode": "",
+    "compiler": "forge",
+    "compilerVersion": "0.2.0",
+    "optimizationUsed": true
+}

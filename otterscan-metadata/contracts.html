@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaunchDotParty - Contract Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .contract { border: 1px solid #ddd; margin-bottom: 20px; border-radius: 8px; }
+        .contract-header { background: #f9f9f9; padding: 15px; border-bottom: 1px solid #ddd; }
+        .contract-body { padding: 15px; }
+        .abi-section { background: #f0f0f0; padding: 10px; border-radius: 4px; margin-top: 10px; }
+        pre { background: #f8f8f8; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .address { font-family: monospace; background: #e8f4fd; padding: 4px 8px; border-radius: 4px; }
+        .network-info { background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 LaunchDotParty Contract Verification</h1>
+            <p>Local development contracts with source code and ABI information</p>
+        </div>
+        
+        <div class="network-info">
+            <h3>🔗 Network Information</h3>
+            <p><strong>RPC URL:</strong> http://localhost:8545</p>
+            <p><strong>Chain ID:</strong> 31337</p>
+            <p><strong>Network:</strong> Anvil Local</p>
+        </div>
+        
+        <div id="contracts">
+            <!-- Contracts will be loaded here -->
+        </div>
+    </div>
+    
+    <script>
+        // Load contract metadata
+        async function loadContracts() {
+            const contractNames = ['PartyStarter', 'PartyVault', 'PartyVenue', 'UniswapV4ERC20'];
+            const container = document.getElementById('contracts');
+            
+            for (const contractName of contractNames) {
+                try {
+                    const response = await fetch(`./${contractName}.json`);
+                    const contract = await response.json();
+                    
+                    const contractDiv = document.createElement('div');
+                    contractDiv.className = 'contract';
+                    contractDiv.innerHTML = `
+                        <div class="contract-header">
+                            <h3>📋 ${contract.contractName}</h3>
+                            <p><strong>Compiler:</strong> ${contract.compiler} ${contract.compilerVersion}</p>
+                        </div>
+                        <div class="contract-body">
+                            <div class="abi-section">
+                                <h4>📖 Contract ABI</h4>
+                                <pre>${JSON.stringify(contract.abi, null, 2)}</pre>
+                            </div>
+                            ${contract.sourceCode ? `
+                                <div class="abi-section">
+                                    <h4>📄 Source Code</h4>
+                                    <pre>${contract.sourceCode.replace(/\\n/g, '\n').replace(/\\"/g, '"')}</pre>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    container.appendChild(contractDiv);
+                } catch (error) {
+                    console.log(`Could not load ${contractName}:`, error);
+                }
+            }
+        }
+        
+        loadContracts();
+    </script>
+</body>
+</html>

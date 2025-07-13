@@ -4,11 +4,11 @@ pragma solidity ^0.8.24;
 import {Owned} from "solmate/auth/Owned.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 import {PartyErrors} from "./types/PartyErrors.sol";
-import {IUniswapV3ERC20} from "./interfaces/IUniswapV3ERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IUniswapV3Factory} from "./interfaces/IUniswapV3Factory.sol";
 import {INonfungiblePositionManager} from "./interfaces/INonfungiblePositionManager.sol";
 import {IWETH} from "./interfaces/IWETH.sol";
-import {TickMath} from "./libraries/TickMath.sol";
+// import {TickMath} from "./libraries/TickMath.sol";
 import {UniswapV3ERC20} from "./tokens/UniswapV3ERC20.sol";
 
 contract PublicPartyVenue is Owned, ReentrancyGuard {
@@ -28,17 +28,28 @@ contract PublicPartyVenue is Owned, ReentrancyGuard {
     string public name = "";
     string public symbol = "";
     string public metadata = "";
+    string public image = "";
+    string public website = "";
+    string public twitter = "";
+    string public telegram = "";
 
     uint256 public totalContributions = 0;
 
     bool public launched = false;
     bool public refundable = false;
+    bool public nameSet = false;
+    bool public symbolSet = false;
+    bool public metadataSet = false;
+    bool public imageSet = false;
+    bool public websiteSet = false;
+    bool public twitterSet = false;
+    bool public telegramSet = false;
 
     IUniswapV3Factory public immutable factory;
     INonfungiblePositionManager public immutable positionManager;
     IWETH public immutable weth;
     uint24 public immutable poolFee = 10000;
-    IUniswapV3ERC20 public token;
+    IERC20 public token;
 
     mapping(address => uint256) public contributions;
     mapping(address => bool) public refunded;
@@ -53,6 +64,15 @@ contract PublicPartyVenue is Owned, ReentrancyGuard {
         address indexed partyStarter,
         uint256 ethAmount,
         uint256 tokenAmount
+    );
+    event MetadataSet(
+        string name,
+        string symbol,
+        string metadata,
+        string image,
+        string website,
+        string twitter,
+        string telegram
     );
 
     constructor(
@@ -279,16 +299,151 @@ contract PublicPartyVenue is Owned, ReentrancyGuard {
     }
 
     // SETTERS FOR METADATA
+    function setBatchMetadata(
+        string memory _name,
+        string memory _symbol,
+        string memory _metadata,
+        string memory _image,
+        string memory _website,
+        string memory _twitter,
+        string memory _telegram
+    ) external onlyPartyStarter {
+        // Only set fields that are provided (non-empty) and not already set
+        if (bytes(_name).length > 0) {
+            PartyErrors.requireValidState(
+                !nameSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            name = _name;
+            nameSet = true;
+        }
+
+        if (bytes(_symbol).length > 0) {
+            PartyErrors.requireValidState(
+                !symbolSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            symbol = _symbol;
+            symbolSet = true;
+        }
+
+        if (bytes(_metadata).length > 0) {
+            PartyErrors.requireValidState(
+                !metadataSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            metadata = _metadata;
+            metadataSet = true;
+        }
+
+        if (bytes(_image).length > 0) {
+            PartyErrors.requireValidState(
+                !imageSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            image = _image;
+            imageSet = true;
+        }
+
+        if (bytes(_website).length > 0) {
+            PartyErrors.requireValidState(
+                !websiteSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            website = _website;
+            websiteSet = true;
+        }
+
+        if (bytes(_twitter).length > 0) {
+            PartyErrors.requireValidState(
+                !twitterSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            twitter = _twitter;
+            twitterSet = true;
+        }
+
+        if (bytes(_telegram).length > 0) {
+            PartyErrors.requireValidState(
+                !telegramSet,
+                PartyErrors.ErrorCode.METADATA_ALREADY_SET
+            );
+            telegram = _telegram;
+            telegramSet = true;
+        }
+
+        emit MetadataSet(
+            _name,
+            _symbol,
+            _metadata,
+            _image,
+            _website,
+            _twitter,
+            _telegram
+        );
+    }
+
     function setName(string memory _name) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !nameSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
         name = _name;
+        nameSet = true;
     }
 
     function setSymbol(string memory _symbol) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !symbolSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
         symbol = _symbol;
+        symbolSet = true;
     }
 
     function setMetadata(string memory _metadata) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !metadataSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
         metadata = _metadata;
+        metadataSet = true;
+    }
+
+    function setImage(string memory _image) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !imageSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
+        image = _image;
+        imageSet = true;
+    }
+
+    function setWebsite(string memory _website) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !websiteSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
+        website = _website;
+        websiteSet = true;
+    }
+
+    function setTwitter(string memory _twitter) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !twitterSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
+        twitter = _twitter;
+        twitterSet = true;
+    }
+
+    function setTelegram(string memory _telegram) external onlyPartyStarter {
+        PartyErrors.requireValidState(
+            !telegramSet,
+            PartyErrors.ErrorCode.METADATA_ALREADY_SET
+        );
+        telegram = _telegram;
+        telegramSet = true;
     }
 
     modifier onlyPartyStarter() {
