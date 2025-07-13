@@ -42,6 +42,7 @@ library PartyErrors {
         SIGNATURE_EXPIRED, // 44
         SIGNATURE_ALREADY_USED, // 45
         CONTRIBUTION_TOO_HIGH, // 46
+        ALREADY_CONTRIBUTED, // 47
         // Access control errors (50-59)
         ONLY_OWNER, // 50
         ONLY_CREATOR, // 51
@@ -53,7 +54,20 @@ library PartyErrors {
         // Pool errors (70-79)
         POOL_CREATION_FAILED, // 70
         INVALID_POOL_CONFIG, // 71
-        LIQUIDITY_ADD_FAILED // 72
+        LIQUIDITY_ADD_FAILED, // 72
+        // Metadata errors (80-89)
+        METADATA_ALREADY_SET, // 80
+        INVALID_ARRAY_LENGTH, // 81
+        NOT_REFUNDABLE, // 82
+        ALREADY_REFUNDABLE, // 83
+        // Supply errors (90-99)
+        INVALID_TARGET_SUPPLY, // 90
+        SUPPLY_OUT_OF_RANGE, // 91
+        // Launch time errors (100-109)
+        INVALID_LAUNCH_TIME, // 100
+        LAUNCH_TIME_NOT_REACHED, // 101
+        // Refund errors (110-119)
+        ALREADY_REFUNDED, // 110
     }
 
     // Custom errors with error codes for easy debugging
@@ -172,6 +186,21 @@ contract ErrorCodeHelper {
             return "Invalid pool configuration";
         if (code == PartyErrors.ErrorCode.LIQUIDITY_ADD_FAILED)
             return "Adding liquidity failed";
+
+        if (code == PartyErrors.ErrorCode.METADATA_ALREADY_SET)
+            return "Metadata field already set";
+        if (code == PartyErrors.ErrorCode.INVALID_ARRAY_LENGTH)
+            return "Array lengths must match and be non-empty";
+
+        if (code == PartyErrors.ErrorCode.INVALID_TARGET_SUPPLY)
+            return "Invalid target supply amount";
+        if (code == PartyErrors.ErrorCode.SUPPLY_OUT_OF_RANGE)
+            return "Supply must be between 100M and 900M tokens";
+
+        if (code == PartyErrors.ErrorCode.INVALID_LAUNCH_TIME)
+            return "Launch time must be in the future";
+        if (code == PartyErrors.ErrorCode.LAUNCH_TIME_NOT_REACHED)
+            return "Launch time has not been reached yet";
 
         return "Unknown error code";
     }
