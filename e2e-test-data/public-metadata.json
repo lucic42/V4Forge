@@ -1,0 +1,9 @@
+{
+    "name": "PublicTestToken",
+    "symbol": "PTT",
+    "description": "Test token for public party e2e testing",
+    "image": "https://example.com/public-token.png",
+    "website": "https://public-test.com",
+    "twitter": "https://twitter.com/publictest",
+    "telegram": "https://t.me/publictest"
+}

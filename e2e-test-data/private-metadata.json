@@ -1,0 +1,9 @@
+{
+    "name": "PrivateTestToken",
+    "symbol": "PRIV",
+    "description": "Test token for private party e2e testing",
+    "image": "https://example.com/private-token.png",
+    "website": "https://private-test.com",
+    "twitter": "https://twitter.com/privatetest",
+    "telegram": "https://t.me/privatetest"
+}

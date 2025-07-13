@@ -1,0 +1,9 @@
+{
+    "name": "InstantTestToken",
+    "symbol": "ITT",
+    "description": "Test token for instant party e2e testing",
+    "image": "https://example.com/instant-token.png",
+    "website": "https://instant-test.com",
+    "twitter": "https://twitter.com/instanttest",
+    "telegram": "https://t.me/instanttest"
+}

@@ -42,19 +42,67 @@ library FeeLib {
     }
 
     /**
-     * @dev Calculate token distribution amounts
+     * @dev Calculate token distribution amounts based on target supply
+     * @param targetSupply The target supply for presale/liquidity
      * @return distribution The token distribution structure
      */
-    function calculateTokenDistribution()
+    function calculateTokenDistribution(
+        uint256 targetSupply
+    ) internal pure returns (PartyTypes.TokenDistribution memory distribution) {
+        // Total supply is always fixed at 1 billion
+        uint256 totalSupply = PartyTypes.FIXED_TOTAL_SUPPLY;
+
+        // Calculate creator and vault tokens as percentages
+        uint256 creatorTokens = (totalSupply *
+            PartyTypes.DEFAULT_CREATOR_PERCENTAGE) / 100;
+        uint256 vaultTokens = (totalSupply *
+            PartyTypes.DEFAULT_VAULT_PERCENTAGE) / 100;
+
+        // Remaining tokens go to liquidity (after deducting presale amount)
+        uint256 liquidityTokens = totalSupply -
+            targetSupply -
+            creatorTokens -
+            vaultTokens;
+
+        // Validate that we don't exceed total supply
+        require(
+            targetSupply + liquidityTokens + creatorTokens + vaultTokens ==
+                totalSupply,
+            "Token distribution exceeds total supply"
+        );
+
+        distribution = PartyTypes.TokenDistribution({
+            totalSupply: totalSupply,
+            presaleTokens: targetSupply,
+            liquidityTokens: liquidityTokens,
+            creatorTokens: creatorTokens,
+            vaultTokens: vaultTokens
+        });
+    }
+
+    /**
+     * @dev Calculate token distribution amounts for instant parties (no presale)
+     * @return distribution The token distribution structure
+     */
+    function calculateInstantTokenDistribution()
         internal
         pure
         returns (PartyTypes.TokenDistribution memory distribution)
     {
+        // For instant parties, all tokens except creator/vault go to liquidity
+        uint256 totalSupply = PartyTypes.FIXED_TOTAL_SUPPLY;
+        uint256 creatorTokens = (totalSupply *
+            PartyTypes.DEFAULT_CREATOR_PERCENTAGE) / 100;
+        uint256 vaultTokens = (totalSupply *
+            PartyTypes.DEFAULT_VAULT_PERCENTAGE) / 100;
+        uint256 liquidityTokens = totalSupply - creatorTokens - vaultTokens;
+
         distribution = PartyTypes.TokenDistribution({
-            totalSupply: PartyTypes.DEFAULT_TOTAL_SUPPLY,
-            liquidityTokens: PartyTypes.DEFAULT_LIQUIDITY_TOKENS,
-            creatorTokens: PartyTypes.DEFAULT_CREATOR_TOKENS,
-            vaultTokens: PartyTypes.DEFAULT_VAULT_TOKENS
+            totalSupply: totalSupply,
+            presaleTokens: 0, // No presale for instant parties
+            liquidityTokens: liquidityTokens,
+            creatorTokens: creatorTokens,
+            vaultTokens: vaultTokens
         });
     }
 

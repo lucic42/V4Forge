@@ -1,117 +1,172 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+// // SPDX-License-Identifier: MIT
+// pragma solidity ^0.8.24;
 
-import {IPoolManager} from "v4-core/src/interfaces/IPoolManager.sol";
-import {PoolId} from "v4-core/src/types/PoolId.sol";
-import {PoolKey} from "v4-core/src/types/PoolKey.sol";
+// import {IUniswapV3Factory} from "v3-core/contracts/interfaces/IUniswapV3Factory.sol";
+// import {INonfungiblePositionManager} from "v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 
-import {PartyTypes} from "../types/PartyTypes.sol";
-import {PartyErrors} from "../types/PartyErrors.sol";
-import {TokenLib} from "./TokenLib.sol";
-import {PoolLib} from "./PoolLib.sol";
-import {FeeLib} from "./FeeLib.sol";
-import {UniswapV4ERC20} from "../tokens/UniswapV4ERC20.sol";
-import {PartyVault} from "../vault/PartyVault.sol";
-import {EarlySwapLimitHook} from "../hooks/EarlySwapLimitHook.sol";
+// import {PartyTypes} from "../types/PartyTypes.sol";
+// import {PartyErrors} from "../types/PartyErrors.sol";
+// import {TokenLib} from "./TokenLib.sol";
+// import {PoolV3Lib} from "./PoolV3Lib.sol";
+// import {FeeLib} from "./FeeLib.sol";
+// import {UniswapV3ERC20} from "../tokens/UniswapV3ERC20.sol";
+// import {PartyVault} from "../vault/PartyVault.sol";
 
-/**
- * @title LaunchLib
- * @dev Library for handling party launch logic
- * Extracted to reduce main contract size
- */
-library LaunchLib {
-    using PartyErrors for *;
+// /**
+//  * @title LaunchLib
+//  * @dev Library for handling party launch logic
+//  * Extracted to reduce main contract size
+//  */
+// library LaunchLib {
+//     using PartyErrors for *;
 
-    event PartySystemTokenLaunched(
-        uint256 indexed partyId,
-        address indexed tokenAddress,
-        address indexed creator,
-        string name,
-        string symbol,
-        PoolId poolId,
-        uint256 totalLiquidity,
-        uint256 timestamp
-    );
+//     event PartySystemTokenLaunched(
+//         uint256 indexed partyId,
+//         address indexed tokenAddress,
+//         address indexed creator,
+//         string name,
+//         string symbol,
+//         address poolAddress,
+//         uint256 totalLiquidity,
+//         uint256 timestamp
+//     );
 
-    event PartyLaunched(
-        uint256 indexed partyId,
-        address indexed tokenAddress,
-        PoolId indexed poolId,
-        uint256 totalLiquidity
-    );
+//     event PartyLaunched(
+//         uint256 indexed partyId,
+//         address indexed tokenAddress,
+//         address indexed poolAddress,
+//         uint256 totalLiquidity
+//     );
 
-    /**
-     * @dev Execute party launch with all required steps
-     */
-    function executePartyLaunch(
-        uint256 partyId,
-        uint256 ethAmount,
-        PartyTypes.Party storage party,
-        PartyTypes.FeeConfiguration memory feeConfig,
-        PartyVault partyVault,
-        IPoolManager poolManager,
-        address weth,
-        EarlySwapLimitHook swapLimitHook,
-        uint256 defaultMaxSwapCount,
-        uint256 defaultMaxSwapPercentBPS
-    ) external returns (PartyTypes.LPPosition memory lpPosition) {
-        // Validate metadata
-        TokenLib.validateTokenMetadata(party.metadata);
+//     // Enhanced events for comprehensive data capture
+//     event TokenDeployed(
+//         uint256 indexed partyId,
+//         address indexed tokenAddress,
+//         address indexed creator,
+//         uint256 totalSupply,
+//         uint256 liquidityTokens,
+//         uint256 creatorTokens,
+//         uint256 vaultTokens,
+//         uint256 timestamp
+//     );
 
-        // Create token
-        UniswapV4ERC20 token = TokenLib.createToken(partyId, party.metadata);
+//     event PartyLaunchComplete(
+//         uint256 indexed partyId,
+//         address indexed tokenAddress,
+//         address indexed creator,
+//         address poolAddress,
+//         uint256 totalLiquidity,
+//         uint256 initialPrice,
+//         uint256 marketCap,
+//         uint256 timestamp
+//     );
 
-        // Mint and distribute tokens
-        PartyTypes.TokenDistribution memory distribution = TokenLib
-            .mintAndDistributeTokens(token, partyId, party.creator, partyVault);
+//     /**
+//      * @dev Execute party launch with all required steps
+//      */
+//     function executePartyLaunch(
+//         uint256 partyId,
+//         uint256 ethAmount,
+//         PartyTypes.Party storage party,
+//         PartyTypes.FeeConfiguration memory feeConfig,
+//         PartyVault partyVault,
+//         IUniswapV3Factory factory,
+//         INonfungiblePositionManager positionManager,
+//         address weth
+//     ) external returns (PartyTypes.LPPosition memory lpPosition) {
+//         // Validate metadata
+//         TokenLib.validateTokenMetadata(party.metadata);
 
-        // Calculate and transfer platform fees
-        (uint256 platformFee, uint256 liquidityAmount) = FeeLib
-            .calculatePlatformFees(ethAmount, feeConfig);
+//         // Create token
+//         UniswapV3ERC20 token = TokenLib.createToken(partyId, party.metadata);
 
-        FeeLib.transferPlatformFees(feeConfig.platformTreasury, platformFee);
+//         // Mint and distribute tokens
+//         PartyTypes.TokenDistribution memory distribution = TokenLib
+//             .mintAndDistributeTokens(token, partyId, party.creator, partyVault);
 
-        // Create pool and position
-        (PoolId poolId, PoolKey memory poolKey) = PoolLib
-            .createPoolAndBurnLiquidity(
-                poolManager,
-                address(token),
-                weth,
-                address(swapLimitHook),
-                liquidityAmount,
-                distribution.liquidityTokens,
-                partyId
-            );
+//         // Emit token deployment event
+//         emit TokenDeployed(
+//             partyId,
+//             address(token),
+//             party.creator,
+//             distribution.liquidityTokens +
+//                 distribution.creatorTokens +
+//                 distribution.vaultTokens, // total supply
+//             distribution.liquidityTokens,
+//             distribution.creatorTokens,
+//             distribution.vaultTokens,
+//             block.timestamp
+//         );
 
-        // Configure swap limits
-        swapLimitHook.configureSwapLimits(
-            poolKey,
-            address(token),
-            defaultMaxSwapCount,
-            defaultMaxSwapPercentBPS
-        );
+//         // Calculate and transfer platform fees
+//         (uint256 platformFee, uint256 liquidityAmount) = FeeLib
+//             .calculatePlatformFees(ethAmount, feeConfig);
 
-        // Update party state
-        party.tokenAddress = address(token);
-        party.poolId = poolId;
-        party.totalLiquidity = liquidityAmount;
-        party.launched = true;
+//         FeeLib.transferPlatformFees(feeConfig.platformTreasury, platformFee);
 
-        // Create LP position
-        lpPosition = PoolLib.createLPPosition(poolKey, poolId, address(token));
+//         // Create pool and add liquidity
+//         (address poolAddress, uint256 tokenId, uint128 liquidity) = PoolV3Lib
+//             .createPoolAndAddLiquidity(
+//                 factory,
+//                 positionManager,
+//                 address(token),
+//                 weth,
+//                 PartyTypes.DEFAULT_FEE,
+//                 distribution.liquidityTokens,
+//                 liquidityAmount,
+//                 address(this),
+//                 partyId
+//             );
 
-        // Emit events
-        emit PartySystemTokenLaunched(
-            partyId,
-            address(token),
-            party.creator,
-            party.metadata.name,
-            party.metadata.symbol,
-            poolId,
-            liquidityAmount,
-            block.timestamp
-        );
+//         // Update party state
+//         party.tokenAddress = address(token);
+//         party.poolAddress = poolAddress;
+//         party.totalLiquidity = liquidityAmount;
+//         party.launched = true;
 
-        emit PartyLaunched(partyId, address(token), poolId, liquidityAmount);
-    }
-}
+//         // Create LP position
+//         lpPosition = PoolV3Lib.createLPPosition(
+//             poolAddress,
+//             address(token),
+//             tokenId,
+//             PartyTypes.DEFAULT_FEE,
+//             liquidity
+//         );
+
+//         // Emit events
+//         emit PartySystemTokenLaunched(
+//             partyId,
+//             address(token),
+//             party.creator,
+//             party.metadata.name,
+//             party.metadata.symbol,
+//             poolAddress,
+//             liquidityAmount,
+//             block.timestamp
+//         );
+
+//         emit PartyLaunched(
+//             partyId,
+//             address(token),
+//             poolAddress,
+//             liquidityAmount
+//         );
+
+//         // Calculate initial price and market cap for comprehensive launch event
+//         // Note: These calculations would need to be implemented based on your pricing logic
+//         uint256 initialPrice = 0; // TODO: Calculate actual initial price
+//         uint256 marketCap = 0; // TODO: Calculate actual market cap
+
+//         // Emit comprehensive launch completion event
+//         emit PartyLaunchComplete(
+//             partyId,
+//             address(token),
+//             party.creator,
+//             poolAddress,
+//             liquidityAmount,
+//             initialPrice,
+//             marketCap,
+//             block.timestamp
+//         );
+//     }
+// }

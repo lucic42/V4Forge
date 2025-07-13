@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {PartyTypes} from "../types/PartyTypes.sol";
 import {FeeLib} from "./FeeLib.sol";
-import {UniswapV4ERC20} from "../tokens/UniswapV4ERC20.sol";
+import {UniswapV3ERC20} from "../tokens/UniswapV3ERC20.sol";
 import {PartyVault} from "../vault/PartyVault.sol";
 import {PartyErrors} from "../types/PartyErrors.sol";
 
@@ -36,8 +36,8 @@ library TokenLib {
     function createToken(
         uint256 partyId,
         PartyTypes.TokenMetadata memory metadata
-    ) internal returns (UniswapV4ERC20 token) {
-        token = new UniswapV4ERC20(metadata.name, metadata.symbol);
+    ) internal returns (UniswapV3ERC20 token) {
+        token = new UniswapV3ERC20(metadata.name, metadata.symbol);
 
         emit TokenCreated(
             partyId,
@@ -53,24 +53,42 @@ library TokenLib {
      * @param partyId The party ID
      * @param creator The party creator address
      * @param vault The party vault contract
+     * @param targetSupply The target supply for presale (0 for instant parties)
      * @return distribution The token distribution amounts
      */
     function mintAndDistributeTokens(
-        UniswapV4ERC20 token,
+        UniswapV3ERC20 token,
         uint256 partyId,
         address creator,
-        PartyVault vault
+        PartyVault vault,
+        uint256 targetSupply
     ) internal returns (PartyTypes.TokenDistribution memory distribution) {
-        distribution = FeeLib.calculateTokenDistribution();
+        if (targetSupply == 0) {
+            // Instant party - no presale
+            distribution = FeeLib.calculateInstantTokenDistribution();
+        } else {
+            // Public/Private party - has presale
+            distribution = FeeLib.calculateTokenDistribution(targetSupply);
+        }
 
         // Mint tokens to appropriate addresses
         token.mint(address(this), distribution.liquidityTokens); // LP tokens to this contract
         token.mint(creator, distribution.creatorTokens); // Creator tokens
         token.mint(address(this), distribution.vaultTokens); // Vault tokens to this contract
 
-        // Transfer vault tokens to the PartyVault
+        // For presale parties, mint presale tokens to this contract (to be distributed later)
+        if (distribution.presaleTokens > 0) {
+            token.mint(address(this), distribution.presaleTokens); // Presale tokens
+        }
+
+        // Transfer vault tokens to the PartyVault with party context
         token.approve(address(vault), distribution.vaultTokens);
-        vault.receiveTokens(address(token), distribution.vaultTokens);
+        vault.receiveTokensFromParty(
+            address(token),
+            distribution.vaultTokens,
+            partyId,
+            creator
+        );
 
         emit TokensDistributed(
             partyId,
@@ -86,7 +104,7 @@ library TokenLib {
      * @param token The token contract
      * @param amount The amount to burn
      */
-    function burnTokens(UniswapV4ERC20 token, uint256 amount) internal {
+    function burnTokens(UniswapV3ERC20 token, uint256 amount) internal {
         if (amount > 0) {
             token.burn(address(this), amount);
         }
@@ -99,7 +117,7 @@ library TokenLib {
      * @return The token balance
      */
     function getTokenBalance(
-        UniswapV4ERC20 token,
+        UniswapV3ERC20 token,
         address account
     ) internal view returns (uint256) {
         return token.balanceOf(account);
